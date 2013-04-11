@@ -1,0 +1,1 @@
+netsh advfirewall firewall add rule name="OMD Monitoring" dir=in action=allow enable=yes profile=any remoteip="ipv4address,ipv6adress" localport=6556 protocol=tcp

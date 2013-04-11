@@ -1,0 +1,58 @@
+#!/usr/bin/python
+# -*- encoding: utf-8; py-indent-offset: 4 -*-
+# +------------------------------------------------------------------+
+# |             ____ _               _        __  __ _  __           |
+# |            / ___| |__   ___  ___| | __   |  \/  | |/ /           |
+# |           | |   | '_ \ / _ \/ __| |/ /   | |\/| | ' /            |
+# |           | |___| | | |  __/ (__|   <    | |  | | . \            |
+# |            \____|_| |_|\___|\___|_|\_\___|_|  |_|_|\_\           |
+# |                                                                  |
+# | Copyright Mathias Kettner 2010             mk@mathias-kettner.de |
+# +------------------------------------------------------------------+
+#
+# Author: Markus Gillmeister <gillmeister@lrz.de>
+
+# Section
+# <<<scheduled_task>>>
+#
+# Example return:
+#  Name, Enabled, LastRun, NextRun, LastResult, Missed, User
+# [['Taskname', 'True', '21.02.2013_01:00:00', '22.02.2013_01:00:00', '0', '0', 'DOM\USER']]
+
+def inventory_sched_task(info):
+   inventory = []
+   #print info
+   for line in info:
+      taskname = line[0]
+      inventory.append( (taskname, "", None) )
+   return inventory
+
+# the check function (dummy)
+def check_sched_task(item, params, info):
+  # loop over all lines
+   for line in info:
+      # is this our line?
+      if line[0] == item:
+        user = line[6].replace("/","\\")
+        if user == "S-1-5-18":
+          user = "SYSTEM"
+        last = line[2].replace("_"," ")
+        next = line[3].replace("_"," ")
+        # is task enabled?
+        if line[1] == "True":
+          # lastresult ok ?
+          if line[4] == "0":
+            return (0, "OK - LastStart %s, NextStart %s, Account %s" % (last, next, user))
+          elif line[4] == "-2147216609":
+            return (1, "WARN - Job didn't complete on time. LastStart %s, NextStart %s, Account %s" % (last, next, user))
+          elif line[4] == "267009":
+            return (0, "OK (job currently running) - LastStart %s, NextStart %s, Account %s" % (last, next, user))
+          else:
+            return (2, "ERROR - %s" % line[4])
+        else:
+          return (3, "Task is currently disabled")  
+   return (3, "UNKNOWN")
+
+# declare the check to Check_MK
+check_info['scheduled_task'] = \
+      (check_sched_task, "Scheduled Task %s", 0, inventory_sched_task)
