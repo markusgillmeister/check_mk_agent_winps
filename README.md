@@ -1,4 +1,3 @@
-==============================
 Project "check_mk_agent_winps"
 ==============================
 
@@ -7,13 +6,13 @@ under windows OS due to native methods and caching.
 At the moment the agent is not a full replacement for the original windows agent but has implented
 most of the features (see below for limitations).
 
-Feel free to try it and report feedback.
+Feel free to use it and report feedback.
 
 
 
-Overview GIT-Directory structure
-================================
-|
+Overview directory structure
+--------------------------------
+<pre>
 |-agent/                    => Windows agent
 |---checks/                 => Directory with ps1-files. All files will be called by agent
 |---components/             => Addons/Scripts which can be executed by checks
@@ -25,10 +24,10 @@ Overview GIT-Directory structure
 |-checks/                   => Server-side checks
 |-src/                      => Sourcecode for sub-projects
 |---Service-Check_MKAgent/  => Visual Studio sourcecode of windows service 
-
+</pre>
 
 Capabilities
-============
+------------
 Unless not mentioned all of the listed checks adapt the behavior of the original checkMK agent.
 
 - CPU Utilization
@@ -58,7 +57,7 @@ via windows firewall which can be set via script (see tools-directory) or via GP
 
 
 ToDo-List
-=========
+---------
 
 - implement logwatch/eventlog
 - further checks for windows systems (ad, exchange....)
