@@ -9,6 +9,12 @@ most of the features (see below for limitations).
 Feel free to use it and report feedback.
 
 
+News/Updates
+------------
+
+2013-04-15  added output for "TCP Connections"-check
+2013-04-11  initial start
+
 
 Overview directory structure
 --------------------------------
@@ -48,7 +54,9 @@ Unless not mentioned all of the listed checks adapt the behavior of the original
 - Windows Updates
   The check gathers windows updates which must be installed on the machine. Due to the fact that the checks is
   time-intensive (>10 seconds) the check will be performed only every 24 hours. (caching feature)
-
+- TCP connections
+  
+  
 Note: Checks which cannot run on every machine (e.g. mssql) are written "intelligent": They don't provide any 
 output or error if they cannot be used (so you don't have to delete the checks on particular machines).
 
