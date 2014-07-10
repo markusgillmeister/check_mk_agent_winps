@@ -19,10 +19,11 @@ Public Class Agent
 
                 ' check if file exists
                 If (File.Exists(agentlocation & "checkmkagent.ps1")) Then
+
                     Dim ProcessProperties As New ProcessStartInfo
                     ProcessProperties.FileName = "powershell.exe"
-                    ProcessProperties.Arguments = agentlocation & "checkmkagent.ps1"
-                    ProcessProperties.WorkingDirectory = agentlocation
+                    ProcessProperties.Arguments = ". '" & agentlocation & "checkmkagent.ps1" & "'"
+                    ProcessProperties.WorkingDirectory = Chr(34) & agentlocation & Chr(34)
                     ProcessProperties.WindowStyle = ProcessWindowStyle.Hidden
                     agentprocess = Process.Start(ProcessProperties)
                 Else

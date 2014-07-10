@@ -14,7 +14,7 @@ Dim result, reboot, numImp, numOpt, important, opti
 Dim updtSearcher, colDownloads, objEntry
 
 If CreateObject("Microsoft.Update.AutoUpdate").DetectNow <> 0 Then
-  WScript.Echo "<<<windows_updates>>>"
+'  WScript.Echo "<<<windows_updates>>>"
   WScript.Quit(0)
 End If
 
@@ -49,7 +49,7 @@ For Each objEntry in colDownloads
   End If
 Next
 
-WScript.Echo "<<<windows_updates>>>"
+' WScript.Echo "<<<windows_updates>>>"
 WScript.Echo reboot & " " & numImp & " " & numOpt
 WScript.Echo important
 WScript.Echo opti

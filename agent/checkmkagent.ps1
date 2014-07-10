@@ -22,6 +22,8 @@ $STATEDIR = $BASEDIR + "state\"
 
 $WmiOS = Get-WMIObject -class Win32_OperatingSystem
 $WmiCS = Get-WMIObject -class Win32_ComputerSystem
+$psinfo = get-host
+$psversion = $psinfo.Version.Major
 
 [console]::TreatControlCAsInput = $true
 
@@ -29,6 +31,20 @@ $encoding = new-object System.Text.AsciiEncoding
 $endpoint = new-object System.Net.IpEndpoint ([System.Net.Ipaddress]::any,$port)
 $listener = new-object System.Net.Sockets.TcpListener $endpoint
 $client = New-Object System.Net.Sockets.TcpClient
+
+$isServer = $false
+$isDeprecatedOS = $false
+
+if ($WmiOS.Caption -like "*Server*") {
+	$isServer = $true
+}
+if ($WmiOS.Caption -like "*2003*") {
+	$isDeprecatedOS = $true
+}
+if ($isServer -eq $true -and $isDeprecatedOS -eq $false) {
+	Import-Module servermanager
+}
+
 
 
 Function ConvertWMIDateToDateTime($ctime)
@@ -61,21 +77,7 @@ Function Run-Check()
 		run
 		
     }
-
-
-#	OutCheckMK
-#	OutUptime
-#	OutDF
-#	OutMem
-#	OutSystemTime
-#	OutService
-#	OutWindowsUpdates
-#	OutScheduledTasks
-#	OutMSSQL
-#	OutCPUUtilization
-#   OutDiskIO
 }
-
 
 Function Start-Server() 
 {
