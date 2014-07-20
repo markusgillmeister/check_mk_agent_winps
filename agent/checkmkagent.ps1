@@ -74,8 +74,11 @@ Function Run-Check()
     $List | select name |% { 
         $file = $CHECKDIR + $_.Name
         . $file 
-		run
+		# is needed due to refresh
+		$WmiOS = Get-WMIObject -class Win32_OperatingSystem
+		$WmiCS = Get-WMIObject -class Win32_ComputerSystem		
 		
+		run
     }
 }
 
