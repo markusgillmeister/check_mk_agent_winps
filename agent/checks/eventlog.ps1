@@ -21,13 +21,13 @@ Function run()
 			$index = 0
 		}
 
-		$currentmaxindex = (Get-EventLog -LogName $logname -Newest 1).Index
-		if ($currentmaxindex -lt $index) {
+		$currentmaxindex = (Get-EventLog -LogName $logname -Newest 1 -ErrorAction "SilentlyContinue").Index
+		if ($currentmaxindex -lt $index -or $currentmaxindex -eq $null) {
 			# index roll-over
 			$index = 0
 		}
 		
-		Get-EventLog -LogName $logname -newest 100 | Where-Object { $_.Index -gt $index } |% {
+		Get-EventLog -LogName $logname -newest 100 -ErrorAction "SilentlyContinue" | Where-Object { $_.Index -gt $index } |% {
 			# $_.EntryType  Warning  Information Error
 
 			$newindex = $_.Index
