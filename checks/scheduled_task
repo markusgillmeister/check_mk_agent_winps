@@ -38,6 +38,8 @@ def check_sched_task(item, params, info):
           user = "SYSTEM"
         last = line[2].replace("_"," ")
         next = line[3].replace("_"," ")
+        if next == "12/30/1899 12:00:00 AM":
+          next = "on demand"
         # is task enabled?
         if line[1] == "True":
           # lastresult ok ?
@@ -47,6 +49,8 @@ def check_sched_task(item, params, info):
             return (1, "WARN - Job didn't complete on time. LastStart %s, NextStart %s, Account %s" % (last, next, user))
           elif line[4] == "267009":
             return (0, "OK (job currently running) - LastStart %s, NextStart %s, Account %s" % (last, next, user))
+          elif line[4] == "1":
+            return (0, "OK (job never started) - NextStart %s, Account %s" % (next, user))
           else:
             return (2, "ERROR - %s" % line[4])
         else:

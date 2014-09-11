@@ -1,3 +1,6 @@
+Function prestart()
+{
+}
 
 #public enum VMState : int  
 #{
@@ -52,4 +55,8 @@ Function run()
 	if ($os.Major -gt 6) {
 		run2012
 	}
+}
+
+Function terminate()
+{
 }

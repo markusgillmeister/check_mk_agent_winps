@@ -1,15 +1,12 @@
 # +------------------------------------------------------------------+
 # |                   CHECK MK agent for Windows                     |
-# | (c) Markus Gillmeister 2013            markus.gillmeister@lrz.de |
+# | (c) Markus Gillmeister 2014            markus.gillmeister@lrz.de |
 # +------------------------------------------------------------------+
 #      Agent is licensed under GNU LESSER GENERAL PUBLIC LICENSE
 
 
 # 
 # Press  STRG+C to quit agent in console mode
-
-
-
 
 # locate script directory
 [string]$BASEDIR = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -45,7 +42,7 @@ if ($isServer -eq $true -and $isDeprecatedOS -eq $false) {
 	Import-Module servermanager
 }
 
-
+$starttime = Get-Date
 
 Function ConvertWMIDateToDateTime($ctime)
 {
@@ -67,6 +64,31 @@ Function LogRefreshNeeded
 	}
 }
 
+Function Run-Prestart()
+{
+    $Dir = get-childitem $CHECKDIR
+    $List = $Dir | where {$_.extension -eq ".ps1"}
+    $List | select name |% { 
+        $file = $CHECKDIR + $_.Name
+        . $file 
+
+		prestart
+    }
+}
+
+Function Run-Terminate()
+{
+    $Dir = get-childitem $CHECKDIR
+    $List = $Dir | where {$_.extension -eq ".ps1"}
+    $List | select name |% { 
+        $file = $CHECKDIR + $_.Name
+        . $file 
+
+		terminate
+    }
+}
+
+
 Function Run-Check()
 {
     $Dir = get-childitem $CHECKDIR
@@ -82,6 +104,46 @@ Function Run-Check()
     }
 }
 
+Function Check-Update($manualcheck = $false) 
+{
+	try {
+		if ($autoupdate -eq $true) {
+			# auto-update enabled				
+			if ( ((Get-Date) - $starttime).Minutes -gt $autoupdateinterval -or $manualcheck -eq $true) {
+				# recheck-interval reached or manual update triggered
+				$versionfile = $autoupdatelocation + "version.txt"
+				if (Test-Path $versionfile){
+					# version file on server found
+					$compare = Compare-Object -ReferenceObject (Get-Content .\version.txt) -DifferenceObject (Get-Content $versionfile)
+					if ($compare.Count -gt 1) {
+						# difference to our version, update has to be done
+						
+						$au_checks = $autoupdatelocation + "checks\"
+						$au_comp = $autoupdatelocation + "components\"
+						Run-Terminate  # terminate checks
+						Start-Sleep -Seconds 2
+						Remove-Item $CHECKDIR -Force -Recurse
+						Remove-Item $COMPDIR -Force -Recurse
+						Copy-Item $au_checks $CHECKDIR -force -recurse
+						Copy-Item $au_comp $COMPDIR -force -recurse
+						#xcopy /K /R /E /I /S /C /H /Y $au_checks $CHECKDIR
+						#xcopy /K /R /E /I /S /C /H /Y $au_comp $COMPDIR
+						xcopy /Y $versionfile .\version.txt
+						
+						Run-Prestart # warmup checks
+						
+					}
+				} else {
+					Write-Host "Update location not found"
+				}
+				
+			}
+		}
+	} catch [Exception] {
+		Write-Host "Update function failed"
+	}
+}
+
 Function Start-Server() 
 {
 	try {
@@ -92,24 +154,32 @@ Function Start-Server()
 		exit		
 	}
 
+	Run-Prestart
+	
 	while ($true)
 	{
+		Check-Update
+		
 		while (-not $listener.Pending())
 		{
 			Start-Sleep -m 100
 			if ([console]::KeyAvailable)
 			{
 				$key = [system.console]::readkey($true)
-				if (($key.modifiers -band [consolemodifiers]"control") -and	($key.key -eq "C"))
+				if ((($key.modifiers -band [consolemodifiers]"control") -and ($key.key -eq "C")) -or $key.key -eq "E")
 				{
 					"Terminating..."
+					Run-Terminate
 					try {
 						$socket.close()
 					} catch [Exception] {
 					}
 					$listener.stop()
 					Exit
-				}    	
+				}
+				if ($key.key -eq "U") {
+					Check-Update $true
+				}
 			}
 		}
 		$socket = $listener.AcceptTcpClient()  # will block here until connection

@@ -1,0 +1,222 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CoreTempPluginProxy</name>
+    </assembly>
+    <members>
+        <member name="T:CoreTemp.Plugin.CoreTempPluginProxy">
+            <summary>
+            Provides an interface between Core Temp and the plugin.
+            </summary>
+        </member>
+        <member name="M:CoreTemp.Plugin.CoreTempPluginProxy.#ctor">
+            <summary>
+            Initializes a new instance of the <see cref="T:CoreTemp.Plugin.CoreTempPluginProxy"/> class.
+            </summary>
+        </member>
+        <member name="M:CoreTemp.Plugin.CoreTempPluginProxy.RemotePluginStop">
+            <summary>
+            Signals Core Temp to stop the current instance of the plugin.
+            </summary>
+        </member>
+        <member name="P:CoreTemp.Plugin.CoreTempPluginProxy.ModuleHandle">
+            <summary>
+            Gets the module handle for the current instance of the PluginNetInterface module.
+            </summary>
+            <value>The module handle.</value>
+        </member>
+        <member name="P:CoreTemp.Plugin.CoreTempPluginProxy.ParentHandle">
+            <summary>
+            Gets the Core Temp window handle.
+            </summary>
+            <value>The Core Temp window handle.</value>
+        </member>
+        <member name="P:CoreTemp.Plugin.CoreTempPluginProxy.PluginReference">
+            <summary>
+            Gets the native reference to the plugin. For internal use only!
+            </summary>
+            <value>The plugin reference.</value>
+        </member>
+        <member name="T:CoreTemp.Plugin.eStartStatus">
+            <summary>
+            Enumerates valid Start statuses.
+            </summary>
+        </member>
+        <member name="F:CoreTemp.Plugin.eStartStatus.Success">
+            <summary>
+            Plugin has started successfully.
+            </summary>
+        </member>
+        <member name="F:CoreTemp.Plugin.eStartStatus.Failed">
+            <summary>
+            Plugin has failed to start.
+            </summary>
+        </member>
+        <member name="T:CoreTemp.Plugin.eConfigureStatus">
+            <summary>
+            Enumerates valid Configuration statuses.
+            </summary>
+        </member>
+        <member name="F:CoreTemp.Plugin.eConfigureStatus.Unsupported">
+            <summary>
+            Plugin does provide a configuration dialog.
+            </summary>
+        </member>
+        <member name="F:CoreTemp.Plugin.eConfigureStatus.Handled">
+            <summary>
+            Plugin handled the configuration request.
+            </summary>
+        </member>
+        <member name="T:CoreTemp.Plugin.IPlugin">
+            <summary>
+            Represents a Core Temp plugin.
+            </summary>
+        </member>
+        <member name="M:CoreTemp.Plugin.IPlugin.Start">
+            <summary>
+            Starts this instance.
+            </summary>
+            <returns>A <see cref="T:CoreTemp.Plugin.eStartStatus"/> which describes the start status of the plugin</returns>
+        </member>
+        <member name="M:CoreTemp.Plugin.IPlugin.Update(CoreTemp.Plugin.CoreTempSharedData)">
+            <summary>
+            Updates the plugin with the data provided by Core Temp.
+            </summary>
+            <param name="Data">Core Temp's shared data.</param>
+        </member>
+        <member name="M:CoreTemp.Plugin.IPlugin.Stop">
+            <summary>
+            Stops this instance.
+            </summary>
+        </member>
+        <member name="M:CoreTemp.Plugin.IPlugin.Configure">
+            <summary>
+            Configures this instance.
+            </summary>
+            <returns>A <see cref="T:CoreTemp.Plugin.eConfigureStatus"/>, indicating whether the configuration option has been handled or is not supported by the plugin.</returns>
+        </member>
+        <member name="M:CoreTemp.Plugin.IPlugin.Remove(System.String)">
+            <summary>
+            Removes the specified path.
+            </summary>
+            <param name="Path">The path to the folder ctaining the plugin files.</param>
+        </member>
+        <member name="P:CoreTemp.Plugin.IPlugin.CoreTempPluginProxyReference">
+            <summary>
+            Gets or sets the core temp plugin proxy reference. You should not modify this value!
+            </summary>
+            <value>The core temp plugin proxy reference.</value>
+        </member>
+        <member name="P:CoreTemp.Plugin.IPlugin.Name">
+            <summary>
+            Gets the name of this plugin.
+            </summary>
+            <value>The plugin name.</value>
+        </member>
+        <member name="P:CoreTemp.Plugin.IPlugin.Description">
+            <summary>
+            Gets the description of this plugin.
+            </summary>
+            <value>The plugin description.</value>
+        </member>
+        <member name="P:CoreTemp.Plugin.IPlugin.Version">
+            <summary>
+            Gets the version of this plugin.
+            </summary>
+            <value>The plugin version string.</value>
+        </member>
+        <member name="T:CoreTemp.Plugin.Win32Window">
+            <summary>
+            Wraps the IntPtr struct containing a native handle to a window.
+            </summary>
+        </member>
+        <member name="M:CoreTemp.Plugin.Win32Window.#ctor(System.IntPtr)">
+            <summary>
+            Initializes a new instance of the <see cref="T:CoreTemp.Plugin.Win32Window"/> class.
+            </summary>
+            <param name="i_Handle">The handle.</param>
+        </member>
+        <member name="P:CoreTemp.Plugin.Win32Window.Handle">
+            <summary>
+            Gets the handle to the window represented by the implementer.
+            </summary>
+            <value></value>
+            <returns>
+            A handle to the window represented by the implementer.
+            </returns>
+        </member>
+        <member name="T:CoreTemp.Plugin.CoreTempSharedData">
+            <summary>
+            Holds the information as provided by Core Temp
+            </summary>
+        </member>
+        <member name="F:CoreTemp.Plugin.CoreTempSharedData.uiLoad">
+            <summary>
+            An array of values representing load percentage, by cores.
+            </summary>
+        </member>
+        <member name="F:CoreTemp.Plugin.CoreTempSharedData.uiTjMax">
+            <summary>
+            An array of values representing TJunction Max temperature, by processors.
+            </summary>
+        </member>
+        <member name="F:CoreTemp.Plugin.CoreTempSharedData.uiCoreCnt">
+            <summary>
+            Number of cores per processor.
+            </summary>
+        </member>
+        <member name="F:CoreTemp.Plugin.CoreTempSharedData.uiCPUCnt">
+            <summary>
+            Number of processors in the system.
+            </summary>
+        </member>
+        <member name="F:CoreTemp.Plugin.CoreTempSharedData.fTemp">
+            <summary>
+            An array of values representing the temperature of each processor core.
+            </summary>
+        </member>
+        <member name="F:CoreTemp.Plugin.CoreTempSharedData.fVID">
+            <summary>
+            Contains the current processor VID. 0 - Not provided.
+            </summary>
+        </member>
+        <member name="F:CoreTemp.Plugin.CoreTempSharedData.fCPUSpeed">
+            <summary>
+            Contains the current processor frequency.
+            </summary>
+        </member>
+        <member name="F:CoreTemp.Plugin.CoreTempSharedData.fFSBSpeed">
+            <summary>
+            Contains the current Front Side Bus frequency.
+            </summary>
+        </member>
+        <member name="F:CoreTemp.Plugin.CoreTempSharedData.fMultipier">
+            <summary>
+            Contains the current processor multiplier.
+            </summary>
+        </member>
+        <member name="F:CoreTemp.Plugin.CoreTempSharedData.CPUName">
+            <summary>
+            Contains the processor name and model.
+            </summary>
+        </member>
+        <member name="F:CoreTemp.Plugin.CoreTempSharedData.ucFahrenheit">
+            <summary>
+            Indicates whether the temperature reported is in Fahrenheit format or Celsius. 0 - Celsius, 1 - Fahrenheit.
+            </summary>
+        </member>
+        <member name="F:CoreTemp.Plugin.CoreTempSharedData.ucDeltaToTjMax">
+            <summary>
+            Indicates whether Delta to TJunction Max option is set in Core Temp. 0 - not set, 1 - set.
+            </summary>
+        </member>
+        <member name="M:CoreTemp.Plugin.CoreTempSharedData.ToString">
+            <summary>
+            Returns a <see cref="T:System.String"/> that represents this instance.
+            </summary>
+            <returns>
+            A <see cref="T:System.String"/> that represents this instance.
+            </returns>
+        </member>
+    </members>
+</doc>

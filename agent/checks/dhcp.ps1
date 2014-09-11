@@ -1,3 +1,7 @@
+Function prestart()
+{
+}
+
 function run() 
 {
 	$isDHCP = $false
@@ -14,4 +18,8 @@ function run()
 		Send-Line $ret
 	}
 
+}
+
+Function terminate()
+{
 }

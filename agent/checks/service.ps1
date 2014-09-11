@@ -1,3 +1,7 @@
+Function prestart()
+{
+}
+
 Function run()
 {
 	Send-Line "<<<services>>>"
@@ -11,4 +15,8 @@ Function run()
 		$temp+= ($_.Name -replace " ","_") + " " + $tstarted  + "/" + ($_.StartMode).ToLower() + " " + $_.DisplayName + "`r`n"
 	}
 	Send-Line $temp
+}
+
+Function terminate()
+{
 }

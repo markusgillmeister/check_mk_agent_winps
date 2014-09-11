@@ -1,3 +1,7 @@
+Function prestart()
+{
+}
+
 Function run()
 {
 	if ($isDeprecatedOS -eq $false) {
@@ -17,4 +21,8 @@ Function run()
 			Send-Line ($name + " " + $_.enabled + " " + $lastruntime + " " + $nextruntime + " " + $lastresult + " " + $_.NumberOfMissedRuns + " " + $user)
 		}
 	}
+}
+
+Function terminate()
+{
 }

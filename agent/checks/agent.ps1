@@ -1,3 +1,7 @@
+Function prestart()
+{
+}
+
 Function run()
 {
 	Send-Line "<<<check_mk>>>"
@@ -10,4 +14,8 @@ Function run()
 	Send-Line "PluginsDirectory: $CHECKDIR"
 	Send-Line "LocalDirectory: -"
 	Send-Line "OnlyFrom: 0.0.0.0/0"
+}
+
+Function terminate()
+{
 }

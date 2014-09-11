@@ -1,3 +1,7 @@
+Function prestart()
+{
+}
+
 Function run()
 {
 	try 
@@ -125,4 +129,8 @@ Function run()
 		#Send-Line "<<<debug>>>"
 		#Send-Line $_.Exception.Message 
 	}
+}
+
+Function terminate()
+{
 }

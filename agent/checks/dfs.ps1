@@ -1,6 +1,9 @@
+Function prestart()
+{
+}
 
 function run() {
-	if ((Get-WmiObject -Namespace root -class __NAMESPACE -filter "name='MicrosoftDFS'") -eq $false) { return }
+	if ((Get-WmiObject -Namespace root -class __NAMESPACE -filter "name='MicrosoftDFS'") -eq $null) { return }
 
 	Send-Line "<<<dfs>>>"
 
@@ -78,4 +81,7 @@ function run() {
 	Write-Host "$Succ successful, $Warn warnings and $Err errors from $($Succ+$Warn+$Err) replications."
 }
 
+Function terminate()
+{
+}
 

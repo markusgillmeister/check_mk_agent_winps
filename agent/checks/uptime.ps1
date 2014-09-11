@@ -1,3 +1,7 @@
+Function prestart()
+{
+}
+
 Function run()
 {
 		$BootTime = $WmiOS.LastBootUpTime
@@ -12,4 +16,8 @@ Function run()
 
 		Send-Line "<<<uptime>>>"
 		Send-Line $total
+}
+
+Function terminate()
+{
 }

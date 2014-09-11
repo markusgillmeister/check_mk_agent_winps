@@ -1,0 +1,42 @@
+# set default value of variable (user can override in main.mk)
+windows_temp_default_values = (65, 73)
+
+# the inventory function
+def inventory_windows_temp(info):
+  # begin with empty inventory
+   inventory = []
+
+   # loop over all output lines of the agent
+   for line in info:
+      item = line[0]   # device name is in the first column
+      temp = line[1]  # temperature
+      inventory.append( (item, "windows_temp_default_values" ) )
+
+   return inventory
+
+# the check function (dummy)
+def check_windows_temp(item, params, info):
+   # unpack check parameters
+   warn, crit = params
+
+   # loop over all lines
+   for line in info:
+      # is this our line?
+      if line[0] == item:
+        celsius = int(line[1])
+        perfdata = [ ( "temp", celsius, warn, crit ) ]
+        if celsius > crit:
+            return (2, "Temperature is %dC" % celsius, perfdata)
+        elif celsius > warn:
+            return (1, "Temperature is %dC" % celsius, perfdata)
+        else:
+            return (0, "Temperature is %dC" % celsius, perfdata)
+   return (3, "Item %s not found in agent output" % item)
+
+# declare the check to Check_MK
+check_info["temperature.windows"] = {
+    'check_function':            check_windows_temp,
+    'inventory_function':        inventory_windows_temp,
+    'service_description':       'Temperature %s',
+    'has_perfdata':              True,
+}

@@ -1,3 +1,7 @@
+Function prestart()
+{
+}
+
 Function run()
 {
 	Send-Line "<<<winperf_processor>>>"
@@ -7,4 +11,8 @@ Function run()
 	gwmi Win32_PerfRawData_PerfOS_Processor | select PercentProcessorTime |% { $temp += " " + $_.PercentProcessorTime % ([math]::pow(2,32)) }
 	$temp += " 100nsec_timer_inv"
 	Send-Line $temp
+}
+
+Function terminate()
+{
 }

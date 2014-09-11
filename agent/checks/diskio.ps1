@@ -1,3 +1,7 @@
+Function prestart()
+{
+}
+
 Function run()
 {
     $avg_disk_queue = "1166"
@@ -35,4 +39,8 @@ Function run()
     Send-Line ($disk_readbyte_sec + " bulk_count")
     Send-Line ($disk_writebyte_sec + " bulk_count")
 
+}
+
+Function terminate()
+{
 }

@@ -1,3 +1,7 @@
+Function prestart()
+{
+}
+
 Function run()
 {
 	Send-Line "<<<mem>>>"
@@ -7,4 +11,8 @@ Function run()
 	Send-Line ("SwapFree:      " + $WmiOS.FreeSpaceInPagingFiles + " kB")
 	Send-Line ("PageTotal:     " + $WmiOS.TotalVirtualMemorySize + " kB")
 	Send-Line ("PageFree:      " + $WmiOS.FreeVirtualMemory + " kB")
+}
+
+Function terminate()
+{
 }

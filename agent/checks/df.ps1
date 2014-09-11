@@ -1,3 +1,7 @@
+Function prestart()
+{
+}
+
 Function run()
 {
 	Send-Line "<<<df>>>"
@@ -13,4 +17,8 @@ Function run()
 		$temp += $label + " " + $_.FileSystem + " " + ($_.Capacity/1024) + " " + (($_.Capacity-$_.FreeSpace)/1024) + " " + ($_.FreeSpace/1024) + " " + [System.Math]::Round( (($_.Capacity-$_.FreeSpace)/$_.Capacity)*100 , 2) + "% " + $label + "`r`n" 	
 	}
 	Send-Line $temp
+}
+
+Function terminate()
+{
 }
