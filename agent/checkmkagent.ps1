@@ -31,6 +31,7 @@ $client = New-Object System.Net.Sockets.TcpClient
 
 $isServer = $false
 $isDeprecatedOS = $false
+$isVM = $false
 
 if ($WmiOS.Caption -like "*Server*") {
 	$isServer = $true
@@ -40,6 +41,9 @@ if ($WmiOS.Caption -like "*2003*") {
 }
 if ($isServer -eq $true -and $isDeprecatedOS -eq $false) {
 	Import-Module servermanager
+}
+if ($WmiCS.Manufacturer -like "*VMWare*" -or $WmiCS.Manufacturer -like "*Microsoft*" -or $WmiCS.Manufacturer -like "*Xen*") {
+	$isVM = $true
 }
 
 $starttime = Get-Date
@@ -111,10 +115,12 @@ Function Check-Update($manualcheck = $false)
 			# auto-update enabled				
 			if ( ((Get-Date) - $starttime).Minutes -gt $autoupdateinterval -or $manualcheck -eq $true) {
 				# recheck-interval reached or manual update triggered
+				$starttime = Get-Date
 				$versionfile = $autoupdatelocation + "version.txt"
+				$currversionfile = $BASEDIR + "version.txt"
 				if (Test-Path $versionfile){
 					# version file on server found
-					$compare = Compare-Object -ReferenceObject (Get-Content .\version.txt) -DifferenceObject (Get-Content $versionfile)
+					$compare = Compare-Object -ReferenceObject (Get-Content $currversionfile) -DifferenceObject (Get-Content $versionfile)
 					if ($compare.Count -gt 1) {
 						# difference to our version, update has to be done
 						
@@ -128,8 +134,8 @@ Function Check-Update($manualcheck = $false)
 						Copy-Item $au_comp $COMPDIR -force -recurse
 						#xcopy /K /R /E /I /S /C /H /Y $au_checks $CHECKDIR
 						#xcopy /K /R /E /I /S /C /H /Y $au_comp $COMPDIR
-						xcopy /Y $versionfile .\version.txt
-						
+						#xcopy /Y $versionfile .\version.txt
+						Copy-Item $versionfile $currversionfile -force
 						Run-Prestart # warmup checks
 						
 					}
