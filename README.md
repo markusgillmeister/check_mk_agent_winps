@@ -12,8 +12,15 @@ Feel free to use it and report feedback.
 News/Updates
 ------------
 
+<pre>
 2013-04-15  added output for "TCP Connections"-check
 2013-04-11  initial start
+2014-09-13  many improvements:
+            - agent auto-update feature (lightweight)
+            - temperature monitoring 
+            - stability improvements
+            - eventlog monitoring (still working on that)
+</pre>
 
 
 Overview directory structure
@@ -39,21 +46,29 @@ Unless not mentioned all of the listed checks adapt the behavior of the original
 - CPU Utilization
 - Disk I/O
 - Disk Utilization
+- Eventlog-Monitoring
+   * at the moment there is no configuration option in config file. Filtering is done in check
 - Memory Utilization
 - MSSQL-Server 
    * should work on all mssql versions beginning from 2008
    * works on normal, clustered and failover machines. In last case the agent tries to get information
      from active partner.
    * gets DB-sizes, backup-timestamp and mssql version
+- Process list
 - Scheduled Tasks
   This checks does currently not exist in original checkMK agent. It collects information of scheduled tasks
   in the system and reports back if jobs failed running. The serverside check-script is in /checks/-directory.
+- Temperature Monitoring
+  This check uses the "Core Temp"-tool (http://www.alcpu.com/CoreTemp/) for gathering temperature information.
+  For integration in the windows agent I developed a plugin for Core Temp (included in repository here). 
+  Please note: Due to license restrication you have to download the "Core Temp" software by yourself and place it in the agent\components\coretemp directory.
+  Do not overwrite the ini-configuration-file. Do not forget to license the tool if you are using it for commercial purpose. 
 - Windows Service
 - Systemtime (NTP)
 - System-Uptime
 - Windows Updates
   The check gathers windows updates which must be installed on the machine. Due to the fact that the checks is
-  time-intensive (>10 seconds) the check will be performed only every 24 hours. (caching feature)
+  time-intensive (>10 seconds) the check will be performed only every 24 hours or after the start of the agent. (caching feature)
 - TCP connections
   
   
@@ -67,6 +82,6 @@ via windows firewall which can be set via script (see tools-directory) or via GP
 ToDo-List
 ---------
 
-- implement logwatch/eventlog
-- further checks for windows systems (ad, exchange....)
+- improve eventlog monitoring
+- further checks for windows systems (dfs, exchange....)
 - classical mrpe-checks (perhaps)
