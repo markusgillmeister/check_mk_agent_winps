@@ -1,5 +1,6 @@
 ##### CONFIG HERE ####################
 
+$servicename = "CheckMKAgent"
 $port = 6556
 
 $autoupdatelocation = "\\server\share\checkmk-agent\"

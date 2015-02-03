@@ -23,5 +23,5 @@ Function run()
 Function terminate()
 {
 	$statfile = $STATEDIR + "stat_windows_updates.log"
-	Remove-Item $statfile
+	if (Test-Path $statfile) { Remove-Item $statfile }
 }

@@ -4,9 +4,27 @@
 # +------------------------------------------------------------------+
 #      Agent is licensed under GNU LESSER GENERAL PUBLIC LICENSE
 
-
-# 
 # Press  STRG+C to quit agent in console mode
+
+# Check if we running as administrator, otherwise switch over to admin console
+$myWindowsID=[System.Security.Principal.WindowsIdentity]::GetCurrent()
+$myWindowsPrincipal=new-object System.Security.Principal.WindowsPrincipal($myWindowsID)
+## Get the security principal for the Administrator role
+$adminRole=[System.Security.Principal.WindowsBuiltInRole]::Administrator
+## Check to see if we are currently running "as Administrator"
+if ($myWindowsPrincipal.IsInRole($adminRole) -eq $false) {
+	## We are not running "as Administrator" - so relaunch as administrator
+	## Create a new process object that starts PowerShell
+	$newProcess = New-Object System.Diagnostics.ProcessStartInfo "PowerShell";
+	## Specify the current script path and name as a parameter
+	$newProcess.Arguments = $myInvocation.MyCommand.Definition;
+	## Indicate that the process should be elevated
+	$newProcess.Verb = "runas";
+	## Start the new process
+	[System.Diagnostics.Process]::Start($newProcess);
+	## Exit from the current, unelevated, process
+	Exit
+}
 
 # locate script directory
 [string]$BASEDIR = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -46,6 +64,11 @@ if ($WmiCS.Manufacturer -like "*VMWare*" -or $WmiCS.Manufacturer -like "*Microso
 	$isVM = $true
 }
 
+if (Test-Path ($BASEDIR + "autoupgrade2.ps1")) {
+  # new autoupdate file
+  Move-Item ($BASEDIR + "autoupgrade2.ps1") ($BASEDIR + "autoupgrade.ps1") -force
+}
+
 $starttime = Get-Date
 
 Function ConvertWMIDateToDateTime($ctime)
@@ -67,6 +90,23 @@ Function LogRefreshNeeded
 		return $false
 	}
 }
+
+Function Touch-File
+{
+		param ([string]$LogFileName)
+		if($LogFileName -eq $null) {
+		    throw "No filename supplied"
+		}
+		if(Test-Path $LogFileName)
+		{
+		    Set-ItemProperty -Path $LogFileName -Name LastWriteTime -Value (get-date)
+		}
+		else
+		{
+		    Set-Content -Path ($LogFileName) -Value ($null);
+		}
+}
+
 
 Function Run-Prestart()
 {
@@ -102,7 +142,7 @@ Function Run-Check()
         . $file 
 		# is needed due to refresh
 		$WmiOS = Get-WMIObject -class Win32_OperatingSystem
-		$WmiCS = Get-WMIObject -class Win32_ComputerSystem		
+		$WmiCS = Get-WMIObject -class Win32_ComputerSystem
 		
 		run
     }
@@ -123,21 +163,26 @@ Function Check-Update($manualcheck = $false)
 					$compare = Compare-Object -ReferenceObject (Get-Content $currversionfile) -DifferenceObject (Get-Content $versionfile)
 					if ($compare.Count -gt 1) {
 						# difference to our version, update has to be done
-						
-						$au_checks = $autoupdatelocation + "checks\"
-						$au_comp = $autoupdatelocation + "components\"
 						Run-Terminate  # terminate checks
 						Start-Sleep -Seconds 2
-						Remove-Item $CHECKDIR -Force -Recurse
-						Remove-Item $COMPDIR -Force -Recurse
-						Copy-Item $au_checks $CHECKDIR -force -recurse
-						Copy-Item $au_comp $COMPDIR -force -recurse
-						#xcopy /K /R /E /I /S /C /H /Y $au_checks $CHECKDIR
-						#xcopy /K /R /E /I /S /C /H /Y $au_comp $COMPDIR
-						#xcopy /Y $versionfile .\version.txt
-						Copy-Item $versionfile $currversionfile -force
-						Run-Prestart # warmup checks
-						
+
+						#$startInfo = New-Object System.Diagnostics.ProcessStartInfo
+						#$startInfo.FileName = "powershell.exe"
+						#$startInfo.Arguments = $BASEDIR + "autoupgrade.ps1"
+
+						$newProcess = New-Object System.Diagnostics.ProcessStartInfo "PowerShell";
+						$newProcess.WorkingDirectory = $BASEDIR
+						$newProcess.Arguments = $BASEDIR + "autoupgrade.ps1"
+						$newProcess.Verb = "runas"
+						[System.Diagnostics.Process]::Start($newProcess);
+
+						try {
+							$socket.close()
+						} catch [Exception] {
+						}
+						$listener.stop()
+						$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")						
+						Exit
 					}
 				} else {
 					Write-Host "Update location not found"
@@ -212,7 +257,7 @@ Function Send-Line($line)
 
 Function Send-Line-Helper([string]$line) 
 {
-		write-host $line
+		#debug write-host $line
 		$line = $line.Trim() + "`r`n"
 		$networkstream.Write($encoding.GetBytes($line),0,$line.Length)		
 }

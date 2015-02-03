@@ -1,5 +1,5 @@
 # set default value of variable (user can override in main.mk)
-windows_temp_default_values = (65, 73)
+windows_temp_default_values = (65, 75)
 
 # the inventory function
 def inventory_windows_temp(info):
