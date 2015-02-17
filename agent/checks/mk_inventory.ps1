@@ -13,7 +13,7 @@ Function run()
 	$statfile = $STATEDIR + "stat_mk_inventory.log"
 	$maxminutes = 3600
 	
-	if ((LogRefreshNeeded $statfile ) -eq $true) {
+	if ((LogRefreshNeeded $statfile $maxminutes) -eq $true) {
 		Touch-File $statfile
 	
 		# calculate unix timestamp
@@ -22,16 +22,16 @@ Function run()
 		$until = [int]($epoch -replace ",.*", "") + ($maxminutes*60) + 600	
 
 		# Processor
-		$processor = gwmi -Class "Win32_Processor" | select DeviceID,Architecture,Description,Manufacturer,MaxClockSpeed,Name,SocketDesignation
+		$processor = gwmi -Class "Win32_Processor" | select Name,Manufacturer,Caption,DeviceID,MaxClockSpeed,AddressWidth,L2CacheSize,L3CacheSize,Architecture,NumberOfCores,NumberOfLogicalProcessors,CurrentVoltage,Status
 		outputWMI "<<<win_cpuinfo:sep(58):persist($until)>>>" $processor ":"
 
 		# OS Version
 		#write-host "<<<win_os:sep(124):persist($until)>>>"
-		$os = $WmiOS | select Caption,CSDVersion,OSArchitecture,Version,WindowsDirectory,OSLanguage,RegisteredUser,Organization,@{Label="InstallDate";Expression={$_.ConvertToDateTime($_.InstallDate)}},@{Label="LastBootUpTime";Expression={$_.ConvertToDateTime($_.LastBootUpTime)}}
+		$os = $WmiOS | select Caption,CSDVersion,OSArchitecture,Version,WindowsDirectory,OSLanguage,RegisteredUser,Organization,ServicePackMajorVersion,ServicePackMinorVersion,@{Label="InstallDate";Expression={$_.ConvertToDateTime($_.InstallDate)}},@{Label="LastBootUpTime";Expression={$_.ConvertToDateTime($_.LastBootUpTime)}}
 		outputWMI "<<<win_os:sep(58):persist($until)>>>" $os ":"
 		
 		# BIOS
-		$bios = gwmi -Class "Win32_Bios" | select SMBIOSBIOSVersion,Manufacturer,Name,SerialNumber,Version
+		$bios = gwmi -Class "Win32_Bios" | select SMBIOSBIOSVersion,SMBIOSMajorVersion,SMBIOSMinorVersion,Manufacturer,Name,SerialNumber,Version
 		outputWMI "<<<win_bios:sep(58):persist($until)>>>" $bios ":"
 		
 		# System
@@ -39,7 +39,8 @@ Function run()
 		outputWMI "<<<win_system:sep(58):persist($until)>>>" $system ":"
 
 		# Hard-Disk
-		$physicaldisk= gwmi -Class "Win32_DiskDrive" | Select Model,Partitions,FirmwareRevision,SerialNumber,@{Name="Size(GB)";Expression={"{0:N1}" -f($_.Size/1gb)}}
+		# BUG  Size makes trouble in CheckMK  -> array["size"] = int(value)    with  size = 299433093120
+		$physicaldisk= gwmi -Class "Win32_DiskDrive" | Select "Manufacturer","InterfaceType","Model","Name","SerialNumber","MediaType","Signature" 
 		outputWMI "<<<win_disks:sep(58):persist($until)>>>" $physicaldisk ":"
 
 		# Graphics Adapter

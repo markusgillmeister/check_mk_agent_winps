@@ -52,9 +52,9 @@ def check_sched_task(item, params, info):
           elif line[4] == "1":
             return (0, "OK (job never started) - NextStart %s, Account %s" % (next, user))
           else:
-            return (2, "ERROR - %s" % line[4])
+            return (2, "Returnvalue %s - LastStart %s, NextStart %s, Account %s" % (line[4],last,next,user))
         else:
-          return (3, "Task is currently disabled")  
+          return (0, "Task is currently disabled")
    return (3, "UNKNOWN")
 
 # declare the check to Check_MK

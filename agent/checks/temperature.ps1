@@ -12,10 +12,8 @@ Function run()
 		Send-Line "<<<temperature>>>"
 		$t = gwmi -Class Sensor -Namespace root\OpenHardwareMonitor -Filter "SensorType='Temperature'" | select Name,Value
 		$t |% {
-			Send-Line ($_.Name + " " + $_.Value)
+			Send-Line ($_.Name.Replace(" ","_") + " " + $_.Value)
 		}
-		# $statfile = $STATEDIR + "coretemp.log"
-		# Send-Line (Get-Content $statfile)
 	}
 }
 

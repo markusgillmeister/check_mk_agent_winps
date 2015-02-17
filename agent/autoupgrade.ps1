@@ -11,6 +11,7 @@ Write-Host "Doing autoupgrade..."
 $BASEDIR += "\"
 $CHECKDIR = $BASEDIR + "checks\"
 $COMPDIR = $BASEDIR + "components\"
+$TOOLSDIR = $BASEDIR + "tools\"
 $STATEDIR = $BASEDIR + "state\"
 
 . $BASEDIR\config.ps1
@@ -21,11 +22,13 @@ if (Test-Path ($autoupdatelocation + "checkmkagent.ps1")) {
 	# File Share is accessible
 	$au_checks = $autoupdatelocation + "checks\"
 	$au_comp = $autoupdatelocation + "components\"
+	$au_tools = $autoupdatelocation + "tools\"
 	$versionfile = $autoupdatelocation + "version.txt"
 	$currversionfile = $BASEDIR + "version.txt"
 	
 	Remove-Item $CHECKDIR -Force -Recurse
 	Remove-Item $COMPDIR -Force -Recurse
+	Remove-Item $TOOLSDIR -Force -Recurse
 	Remove-Item ($BASEDIR + "checkmkagent.ps1") -Force
 	Remove-Item ($BASEDIR + "install.ps1") -Force
 	Remove-Item ($BASEDIR + "uninstall.ps1") -Force
@@ -33,6 +36,7 @@ if (Test-Path ($autoupdatelocation + "checkmkagent.ps1")) {
 	
 	Copy-Item $au_checks $CHECKDIR -force -recurse
 	Copy-Item $au_comp $COMPDIR -force -recurse
+	Copy-Item $au_tools $TOOLSDIR -Force -Recurse
 	Copy-Item ($autoupdatelocation + "checkmkagent.ps1") ($BASEDIR + "checkmkagent.ps1") -Force
 	Copy-Item ($autoupdatelocation + "install.ps1") ($BASEDIR + "install.ps1") -Force
 	Copy-Item ($autoupdatelocation + "uninstall.ps1") ($BASEDIR + "uninstall.ps1") -Force

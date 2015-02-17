@@ -40,13 +40,13 @@ cd $BASEDIR
 
 .\nssm.exe install $servicename "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
 .\nssm.exe set $servicename Application C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
-.\nssm.exe set $servicename AppParameters ($BASEDIR + "checkmkagent.ps1")
-.\nssm.exe set $servicename AppDirectory $BASEDIR
+.\nssm.exe set $servicename AppParameters (".\checkmkagent.ps1")
+.\nssm.exe set $servicename AppDirectory ('"""""' + $BASEDIR + '""""')
 .\nssm.exe set $servicename AppExit Default Ignore
 .\nssm.exe set $servicename AppStopMethodConsole 5500
 .\nssm.exe set $servicename AppRotateFiles 1
 .\nssm.exe set $servicename AppRotateSeconds 86400
-.\nssm.exe set $servicename AppStdout ($STATEDIR + "sevice-output.log")
-.\nssm.exe set $servicename AppStderr ($STATEDIR + "sevice-output.log")
+.\nssm.exe set $servicename AppStdout ($STATEDIR + "service-output.log")
+.\nssm.exe set $servicename AppStderr ($STATEDIR + "service-error.log")
 .\nssm.exe set $servicename DisplayName CheckMKAgent
 .\nssm.exe set $servicename Start SERVICE_AUTO_START
