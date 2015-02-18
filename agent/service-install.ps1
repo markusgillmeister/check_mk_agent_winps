@@ -41,7 +41,7 @@ cd $BASEDIR
 .\nssm.exe install $servicename "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
 .\nssm.exe set $servicename Application C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
 .\nssm.exe set $servicename AppParameters (".\checkmkagent.ps1")
-.\nssm.exe set $servicename AppDirectory ('"""""' + $BASEDIR + '""""')
+.\nssm.exe set $servicename AppDirectory "%ProgramFiles%\Check_MK\"
 .\nssm.exe set $servicename AppExit Default Ignore
 .\nssm.exe set $servicename AppStopMethodConsole 5500
 .\nssm.exe set $servicename AppRotateFiles 1

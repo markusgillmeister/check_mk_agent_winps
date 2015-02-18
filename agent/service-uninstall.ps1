@@ -38,4 +38,5 @@ $STATEDIR = $BASEDIR + "state\"
 
 cd $BASEDIR
 
+.\nssm.exe stop $servicename
 .\nssm.exe remove $servicename confirm

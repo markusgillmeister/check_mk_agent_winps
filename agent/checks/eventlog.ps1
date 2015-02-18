@@ -5,8 +5,7 @@ Function prestart()
 Function run()
 {
 	Send-Line "<<<logwatch>>>"
-	
-	Get-EventLog -list |% {
+  Get-EventLog -list | Where-Object { $_.Log -notin $global:eventlog_ignorelog } |% {
 		# cycle trough all event logs
 	  $logname = $_.Log
 	  $logstat = $STATEDIR + "event_" + $logname + ".log"
