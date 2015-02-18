@@ -30,16 +30,18 @@ if (Test-Path ($autoupdatelocation + "checkmkagent.ps1")) {
 	Remove-Item $COMPDIR -Force -Recurse
 	Remove-Item $TOOLSDIR -Force -Recurse
 	Remove-Item ($BASEDIR + "checkmkagent.ps1") -Force
-	Remove-Item ($BASEDIR + "install.ps1") -Force
-	Remove-Item ($BASEDIR + "uninstall.ps1") -Force
+	Remove-Item ($BASEDIR + "install.ps1") -Force  #legacy
+	Remove-Item ($BASEDIR + "uninstall.ps1") -Force #legacy 
+	Remove-Item ($BASEDIR + "service-install.ps1") -Force
+	Remove-Item ($BASEDIR + "service-uninstall.ps1") -Force
 	Remove-Item ($BASEDIR + "config.ps1") -Force
 	
 	Copy-Item $au_checks $CHECKDIR -force -recurse
 	Copy-Item $au_comp $COMPDIR -force -recurse
 	Copy-Item $au_tools $TOOLSDIR -Force -Recurse
 	Copy-Item ($autoupdatelocation + "checkmkagent.ps1") ($BASEDIR + "checkmkagent.ps1") -Force
-	Copy-Item ($autoupdatelocation + "install.ps1") ($BASEDIR + "install.ps1") -Force
-	Copy-Item ($autoupdatelocation + "uninstall.ps1") ($BASEDIR + "uninstall.ps1") -Force
+	Copy-Item ($autoupdatelocation + "service-install.ps1") ($BASEDIR + "service-install.ps1") -Force
+	Copy-Item ($autoupdatelocation + "service-uninstall.ps1") ($BASEDIR + "service-uninstall.ps1") -Force
 	Copy-Item ($autoupdatelocation + "config.ps1") ($BASEDIR + "config.ps1") -Force
 	Copy-Item ($autoupdatelocation + "autoupgrade.ps1") ($BASEDIR + "autoupgrade2.ps1") -Force
 	Copy-Item $versionfile $currversionfile -force
@@ -62,8 +64,3 @@ if (Test-Path ($autoupdatelocation + "checkmkagent.ps1")) {
 	[System.Diagnostics.Process]::Start($newProcess);	
 	Exit
 }
-
-
-
-						
-

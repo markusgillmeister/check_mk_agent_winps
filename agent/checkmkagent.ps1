@@ -50,6 +50,7 @@ $client = New-Object System.Net.Sockets.TcpClient
 $isServer = $false
 $isDeprecatedOS = $false
 $isVM = $false
+$psversion = $PSVersionTable.PSVersion.Major
 
 if ($WmiOS.Caption -like "*Server*") {
 	$isServer = $true
