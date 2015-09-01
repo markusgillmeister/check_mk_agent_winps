@@ -18,13 +18,13 @@ Function run()
         $instance += " " + $_.Name.Replace(" ","_")
         $instancecount++
 
-        $avg_disk_queue       += " " + $_.AvgDiskQueueLength % ([math]::pow(2,32))
-        $avg_disk_read_queue  += " " + $_.AvgDiskReadQueueLength % ([math]::pow(2,32))
-        $avg_disk_write_queue += " " + $_.AvgDiskWriteQueueLength % ([math]::pow(2,32))
+        $avg_disk_queue       += " " + $_.AvgDiskQueueLength
+        $avg_disk_read_queue  += " " + $_.AvgDiskReadQueueLength
+        $avg_disk_write_queue += " " + $_.AvgDiskWriteQueueLength
         $disk_read_sec        += " " + $_.DiskReadsPersec
         $disk_write_sec       += " " + $_.DiskWritesPersec
-        $disk_readbyte_sec    += " " + $_.DiskReadBytesPersec % ([math]::pow(2,32))
-        $disk_writebyte_sec   += " " + $_.DiskWriteBytesPersec % ([math]::pow(2,32))
+        $disk_readbyte_sec    += " " + $_.DiskReadBytesPersec
+        $disk_writebyte_sec   += " " + $_.DiskWriteBytesPersec
     }
     Send-Line ""
     Send-Line "<<<winperf_phydisk>>>"
