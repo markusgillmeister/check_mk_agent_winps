@@ -39,6 +39,8 @@ Function run2008r2() {
 }
 
 Function run2012() {
+	if ((Get-WmiObject -Namespace root -class __NAMESPACE -filter "name='virtualization'") -eq $null) { return }
+	
 	Send-Line "<<<hyperv_vms>>>"
 	Get-VM | format-table -HideTableHeaders -property Name, State, Uptime, Status
 }

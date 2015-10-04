@@ -15,7 +15,7 @@ Goals
 - auto-update of agent without extra deployment systems
 
 At the moment the agent is not a full replacement for the original windows agent
-but has implented most of the features (see below for limitations).
+but has implemented most of the features (see below for limitations).
 
 Feel free to use it and report feedback.
 
@@ -37,6 +37,7 @@ News/Updates
               (Non Sucking Service Manager)
             - improved auto-update
             - mk_inventory feature implemented
+2015-10-04  bugfixes
 </pre>
 
 
@@ -58,6 +59,22 @@ Overview directory structure
 |-src/                      => Sourcecode for sub-projects
 |---Service-Check_MKAgent/  => Visual Studio sourcecode of windows service 
 </pre>
+
+
+Installation/usage instructions
+-------------------------------
+
+- Ensure that Powershell Execution Policy is set to RemoteSigned or Unrestricted
+  (run powershell as administrator)
+  > Set-ExecutionPolicy RemoteSigned
+
+- Install Agent with install.bat
+  * it copies over the agent-files to "%PROGRAMFILES%\Check_MK\"
+  * runs powershell-file "service-install.ps1" to install the windows service
+  * starts the service
+  
+- To open the firewall use GPO or do it manually. (A script template can be found here .\agent\tools\)
+
 
 
 Capabilities
