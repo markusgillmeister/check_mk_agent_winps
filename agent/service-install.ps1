@@ -38,8 +38,8 @@ $STATEDIR = $BASEDIR + "state\"
 
 cd $BASEDIR
 
-.\nssm.exe install $servicename "C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"
-.\nssm.exe set $servicename Application C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe
+.\nssm.exe install $servicename ($env:systemroot + "\System32\WindowsPowerShell\v1.0\powershell.exe")
+.\nssm.exe set $servicename Application ($env:systemroot + "\System32\WindowsPowerShell\v1.0\powershell.exe")
 .\nssm.exe set $servicename AppParameters (".\checkmkagent.ps1")
 .\nssm.exe set $servicename AppDirectory "%ProgramFiles%\Check_MK\"
 .\nssm.exe set $servicename AppExit Default Ignore

@@ -3,7 +3,7 @@ Function prestart()
 }
 
 Function outputWMI($headline,$wmi,$seperator=":") {
-	Send-Line $headline
+	if ($headline -ne $null) { Send-Line $headline }
 	$wmi | Get-Member | where { $_.MemberType -eq "NoteProperty" } |% { Send-Line ($_.Name + $seperator + $wmi.($_.Name)) }
 }
 
@@ -22,8 +22,10 @@ Function run()
 		$until = [int]($epoch -replace ",.*", "") + ($maxminutes*60) + 600	
 
 		# Processor
-		$processor = gwmi -Class "Win32_Processor" | select Name,Manufacturer,Caption,DeviceID,MaxClockSpeed,AddressWidth,L2CacheSize,L3CacheSize,Architecture,NumberOfCores,NumberOfLogicalProcessors,CurrentVoltage,Status
-		outputWMI "<<<win_cpuinfo:sep(58):persist($until)>>>" $processor ":"
+		Send-Line "<<<win_cpuinfo:sep(58):persist($until)>>>"
+		gwmi -Class "Win32_Processor" | select Name,Manufacturer,Caption,DeviceID,MaxClockSpeed,AddressWidth,L2CacheSize,L3CacheSize,Architecture,NumberOfCores,NumberOfLogicalProcessors,CurrentVoltage,Status |% {
+			outputWMI $null $_ ":"
+		}
 
 		# OS Version
 		#write-host "<<<win_os:sep(124):persist($until)>>>"
@@ -40,12 +42,17 @@ Function run()
 
 		# Hard-Disk
 		# BUG  Size makes trouble in CheckMK  -> array["size"] = int(value)    with  size = 299433093120
-		$physicaldisk= gwmi -Class "Win32_DiskDrive" | Select "Manufacturer","InterfaceType","Model","Name","SerialNumber","MediaType","Signature" 
-		outputWMI "<<<win_disks:sep(58):persist($until)>>>" $physicaldisk ":"
-
+		Send-Line "<<<win_disks:sep(58):persist($until)>>>"
+		gwmi -Class "Win32_DiskDrive" | Select "Manufacturer","InterfaceType","Model","Name","SerialNumber","Size","MediaType","Signature" |% {
+			outputWMI $null $_ ":"
+		}
+		
 		# Graphics Adapter
-		$gpu=gwmi Win32_VideoController | Select Name,Description,AdapterCompatibility,VideoModeDescription,VideoProcessor,DriverVersion,DriverDate,MaxMemorySupported
-		outputWMI "<<<win_video:sep(58):persist($until)>>>" $gpu ":"
+		Send-Line "<<<win_video:sep(58):persist($until)>>>" 
+		gwmi Win32_VideoController | Select Name,Description,AdapterCompatibility,VideoModeDescription,VideoProcessor,DriverVersion,DriverDate,MaxMemorySupported |% {
+			outputWMI $null $gpu ":"
+		}
+		
 	}
 }
 
