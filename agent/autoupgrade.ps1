@@ -26,6 +26,8 @@ if (Test-Path ($autoupdatelocation + "checkmkagent.ps1")) {
 	$versionfile = $autoupdatelocation + "version.txt"
 	$currversionfile = $BASEDIR + "version.txt"
 	
+	Start-Sleep -Seconds 2
+	
 	Remove-Item $CHECKDIR -Force -Recurse
 	Remove-Item $COMPDIR -Force -Recurse
 	Remove-Item $TOOLSDIR -Force -Recurse
@@ -47,20 +49,10 @@ if (Test-Path ($autoupdatelocation + "checkmkagent.ps1")) {
 	Copy-Item $versionfile $currversionfile -force
 	
 	Write-Host "Upgrade done."
-	$newProcess = New-Object System.Diagnostics.ProcessStartInfo "PowerShell";
-	$newProcess.Arguments = $BASEDIR + "checkmkagent.ps1"
-	$newProcess.WorkingDirectory = $BASEDIR
-	$newProcess.Verb = "runas"
-	[System.Diagnostics.Process]::Start($newProcess);	
 	Exit	
 
 } else {
 	# Update not possible. 
 	Write-Host "Upgrade not possible - fileshare not available"
-	$newProcess = New-Object System.Diagnostics.ProcessStartInfo "PowerShell";
-	$newProcess.Arguments = $BASEDIR + "checkmkagent.ps1"
-	$newProcess.WorkingDirectory = $BASEDIR
-	$newProcess.Verb = "runas"
-	[System.Diagnostics.Process]::Start($newProcess);	
 	Exit
 }

@@ -50,7 +50,6 @@ $client = New-Object System.Net.Sockets.TcpClient
 $isServer = $false
 $isDeprecatedOS = $false
 $isVM = $false
-$psversion = $PSVersionTable.PSVersion.Major
 
 if ($WmiOS.Caption -like "*Server*") {
 	$isServer = $true
@@ -58,7 +57,7 @@ if ($WmiOS.Caption -like "*Server*") {
 if ($WmiOS.Caption -like "*2003*") {
 	$isDeprecatedOS = $true
 }
-if ($isServer -eq $true -and $isDeprecatedOS -eq $false) {
+if ($isServer -eq $true -and $isDeprecatedOS -eq $false -and $WmiOS.Version -like '6.0*' -eq $false) {
 	Import-Module servermanager
 }
 if ($WmiCS.Manufacturer -like "*VMWare*" -or $WmiCS.Manufacturer -like "*Microsoft*" -or $WmiCS.Manufacturer -like "*Xen*") {
@@ -164,26 +163,27 @@ Function Check-Update($manualcheck = $false)
 					$compare = Compare-Object -ReferenceObject (Get-Content $currversionfile) -DifferenceObject (Get-Content $versionfile)
 					if ($compare.Count -gt 1) {
 						# difference to our version, update has to be done
+						Write-Host "Difference found, starting update..."
+						
 						Run-Terminate  # terminate checks
 						Start-Sleep -Seconds 2
-
-						#$startInfo = New-Object System.Diagnostics.ProcessStartInfo
-						#$startInfo.FileName = "powershell.exe"
-						#$startInfo.Arguments = $BASEDIR + "autoupgrade.ps1"
-
-						$newProcess = New-Object System.Diagnostics.ProcessStartInfo "PowerShell";
-						$newProcess.WorkingDirectory = $BASEDIR
-						$newProcess.Arguments = $BASEDIR + "autoupgrade.ps1"
-						$newProcess.Verb = "runas"
-						[System.Diagnostics.Process]::Start($newProcess);
-
+					
 						try {
 							$socket.close()
 						} catch [Exception] {
 						}
 						$listener.stop()
-						$x = $host.UI.RawUI.ReadKey("NoEcho,IncludeKeyDown")						
-						Exit
+									
+						. ($BASEDIR + "autoupgrade.ps1")
+						
+						if (Test-Path ($BASEDIR + "autoupgrade2.ps1")) {
+						  # new autoupdate file
+						  Move-Item ($BASEDIR + "autoupgrade2.ps1") ($BASEDIR + "autoupgrade.ps1") -force
+						}						
+						
+						Start-Sleep -Seconds 2						
+						
+						Start-Server
 					}
 				} else {
 					Write-Host "Update location not found"
@@ -193,6 +193,7 @@ Function Check-Update($manualcheck = $false)
 		}
 	} catch [Exception] {
 		Write-Host "Update function failed"
+		Write-Host $_.Exception.Message
 	}
 }
 
