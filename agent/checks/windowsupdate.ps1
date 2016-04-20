@@ -5,19 +5,24 @@ Function prestart()
 Function run()
 {
 	$statfile = $STATEDIR + "stat_windows_updates.log"
-	if ((LogRefreshNeeded $statfile 3600) -eq $true) {
-		#if logfile does not exist create empty file , so that following check runs do not overrun each other
+	
+	# Send state file if it exists and has content
+	if ((Test-Path $statfile) -and (Get-Item $statfile).Length -gt 0) {
+		Send-Line "<<<windows_updates>>>"
+		Send-Line (Get-Content $statfile)
+	}	
+	
+	if ((LogRefreshNeeded $statfile 60) -eq $true) {
+		# if logfile does not exist create empty file , so that following check runs do not overrun each other
+		# TODO: This is probably not needed anymore, since Start-Process below immediately nulls the file
 		if ((Test-Path $statfile) -eq $false) { 
-			"0 0 0" | Out-File $statfile 
+			New-Item -ItemType file $statfile 
 		}
 		
+		# Check for Windows updates in the background
 		$file = "`"" + $COMPDIR + "windows_updates.vbs`""
-		#Invoke-Expression "cscript //Nologo $file"  | Out-File $statfile
 		Start-Process "cscript" -ArgumentList "//Nologo $file" -RedirectStandardOutput $statfile
 	}
-	
-	Send-Line "<<<windows_updates>>>"
-	Send-Line (Get-Content $statfile)
 }
 
 Function terminate()
