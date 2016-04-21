@@ -31,7 +31,7 @@ Function run2008r2() {
 			"32770" { $state="Starting" }
 			default { $state="Unknown" }
 		}
-		$uptime = 0
+		$uptime = "00:00:00"
 		#$uptime = (Get-Date) - ($_.TimeOfLastStateChange)
 		#write-host $_.ElementName $state $uptime $_.StatusDescriptions[0]
 		Send-Line ($_.ElementName+" "+$state+" "+$uptime+" "+$_.StatusDescriptions[0])
